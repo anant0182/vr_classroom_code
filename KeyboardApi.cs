@@ -15,7 +15,10 @@ using UnityEngine.XR.Interaction.Toolkit;
 using System.Text; 
 
 /// <summary>
-/// Handles both Dictionary Lookups and contextual AI Chatbot queries in the VR classroom environment.
+/// This script implements an interactive AI-assisted query system within the
+/// virtual classroom environment. It supports both dictionary-based lookups
+/// for single-word queries and contextual AI-based responses for conceptual
+/// or multi-word queries using the Gemini API.
 /// </summary>
 public class KeyboardApi : MonoBehaviour
 {
@@ -25,17 +28,20 @@ public class KeyboardApi : MonoBehaviour
     private string GEMINI_API_URL => $"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={API_KEY}";
     
     // --- UI References ---
+    // Input field for user queries and output panel for displaying responses
     [Header("UI References")]
     public TMP_InputField queryInput;
     public RawImage resultPanel; 
     public TextMeshProUGUI resultText; 
 
     // --- XR Input References (Existing) ---
+    // References to XR controllers and head-mounted display for interaction
     public InputDevice _rightController;
     public InputDevice _leftController;
     public InputDevice _HMD;
     
     // --- State Management ---
+    // Tracks dictionary definition index and query state
     private int currentDefinitionIndex = 0;
     private string currentSearchTerm = null;
     private bool p_BButton = false; 
@@ -46,7 +52,7 @@ public class KeyboardApi : MonoBehaviour
 
     void Start()
     {
-        // Find the TextMeshProUGUI component if not manually assigned
+        // Initialize output text reference and display default instruction
         if (resultText == null && resultPanel != null)
         {
             resultText = resultPanel.GetComponentInChildren<TextMeshProUGUI>();
@@ -66,6 +72,7 @@ public class KeyboardApi : MonoBehaviour
             InitializeInputDevices();
         }
 
+        // Cycle through dictionary definitions using controller input
         if (_leftController.TryGetFeatureValue(CommonUsages.secondaryButton, out bool Bbutton))
         {
             if (Bbutton != p_BButton && Bbutton)
